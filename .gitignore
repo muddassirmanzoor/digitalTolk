@@ -1,0 +1,50 @@
+$RECYCLE.BIN/
+.github/
+.idea/
+CHANGELOG.md
+DumpStack.log
+DumpStack.log.tmp
+IMIS.zip
+IMIS/
+IMISOld/
+PRA FILE RETURN.mkv
+PhpStorm-2021.3.1.exe
+Pmiu/
+PollingController.php
+QuestionTemplate.php
+ZapierLeadPopsQa.php
+ahsan.rar
+biome/
+control.php
+demo code.zip
+dev db.txt
+dev_sedhr.sql
+hubspotapi/
+id_rsa - 58.27.199.171 - Muddassir.ppk
+images/
+live_aeo_cro.sql.gz
+mustafai.zip
+my-app/
+package.json
+pagefile.sys
+pepris_Private_Key.ppk
+phpunit.xml
+pmiu images/
+public/
+react-reg/
+tna.zip
+tna/
+travelCord - Copy/
+travelCord/
+travelcoord/
+umrah/
+vite.config.js
+volopa-docker/
+wellhello-php-api/
+wellhello-php-backend/
+xampp/
+vendor/
+storage/
+.env
+
+
