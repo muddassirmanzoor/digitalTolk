@@ -26,6 +26,11 @@
                     <div class="mb-2">
                         <button type="submit" class="btn btn-primary">Search Data</button>
                     </div>
+
+                    <!-- Search Button -->
+                    <div class="mb-2">
+                        <a href="{{url('download-arrival-list')}}" class="btn btn-primary">Download Data</a>
+                    </div>
                 </div>
             </div>
         </div>

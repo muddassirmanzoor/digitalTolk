@@ -328,7 +328,7 @@ class DataController extends Controller
             }
             if ($request->has('comments')) {
                 if (empty(trim($request->input('comments', '')))) {
-                    return ;
+
                 }
                 EditComment::updateOrCreate(
                     ['operational_id' => $request->input('operational_id')],

@@ -60,4 +60,6 @@ Route::middleware(['auth'])->group(function () {
     Route::any('edit-assign-driver-form', [TransportController::class, 'editAssignDriverFrom'])->middleware('role:transport,admin');
     Route::any('assign-driver', [TransportController::class, 'assignDriver'])->middleware('role:transport,admin');
 
+    Route::get('download-arrival-list', [TransportController::class, 'downloadArabicExcel']);
+
 });

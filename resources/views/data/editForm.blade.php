@@ -343,7 +343,7 @@
                             <div class="col-xl-12 col-lg-12">
                                 <div class="mb-3">
                                     <label for="comments" class="form-label">Comments</label>
-                                    <textarea type="text" id="comments" name="comments"
+                                    <textarea type="text" id="comments" name="comments" required
                                            class="form-control" placeholder="Enter Transport Company">
                                        {{ $operation->comments->pluck('comments')->join(', ') }}
                                     </textarea>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ArabicExport;
 use App\Models\Agent;
 use App\Models\ArrivalSection;
 use App\Models\AuditLog;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 class TransportController extends Controller
@@ -31,37 +33,8 @@ class TransportController extends Controller
     public function operationsList(Request $request)
     {
         $operation_date = $request->operation_date ?? now()->addDay()->format('Y-m-d'); // Default to today if not provided
+        $combinedOperations = $this->getOperationsData($operation_date);
 
-        // Model mapping for different sections
-        $modelMapping = [
-            'arrival' => [ArrivalSection::class, 'arrival_date', 'arrival_time', null, null],
-            'departure' => [DepartureSection::class, 'departure_date', 'departure_time', null, null],
-            'movement' => [MovementSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to'],
-            'mzarat' => [MzaratSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to'],
-        ];
-
-        // Initialize an empty array for combined operations
-        $combinedOperations = [];
-
-        foreach ($modelMapping as $section => [$model, $dateColumn, $timeColumn, $travelFromColumn, $travelToColumn]) {
-            $sectionOperations = $model::where($dateColumn, $operation_date)
-                ->with('operation', 'driverAssignment.driver') // Load related models
-                ->get()
-                ->map(function ($operation) use ($section, $dateColumn, $timeColumn, $travelFromColumn, $travelToColumn) {
-                    $operation->section = $section; // Dynamically add section
-                    $operation->dateColumn = $dateColumn;
-                    $operation->timeColumn = $timeColumn;
-
-                    if ($travelFromColumn && $travelToColumn) {
-                        $operation->travel_from = $operation->$travelFromColumn;
-                        $operation->travel_to = $operation->$travelToColumn;
-                    }
-
-                    return $operation;
-                });
-
-            $combinedOperations = array_merge($combinedOperations, $sectionOperations->toArray());
-        }
         return view('transport.operationList', compact('combinedOperations', 'operation_date'));
     }
 
@@ -144,4 +117,52 @@ class TransportController extends Controller
         return redirect()->back()->with('success', 'Status updated successfully.');
     }
 
+    public function downloadArabicExcel(Request $request)
+    {
+        $operation_date = $request->operation_date ?? now()->addDay()->format('Y-m-d'); // Default to today if not provided
+        $combinedOperations = $this->getOperationsData($operation_date);
+
+        return Excel::download(new ArabicExport($combinedOperations), 'list.xlsx');
+    }
+
+    /**
+     * Common method to retrieve and process operations data.
+     */
+    private function getOperationsData($operation_date)
+    {
+        // Model mapping for different sections
+        $modelMapping = [
+            'arrival' => [ArrivalSection::class, 'arrival_date', 'arrival_time', null, null, 'arrival_flight_no'],
+            'departure' => [DepartureSection::class, 'departure_date', 'departure_time', null, null, 'departure_flight_no'],
+            'movement' => [MovementSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to', null],
+            'mzarat' => [MzaratSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to', null],
+        ];
+
+        $combinedOperations = [];
+
+        foreach ($modelMapping as $section => [$model, $dateColumn, $timeColumn, $travelFromColumn, $travelToColumn, $flightNumber]) {
+            $sectionOperations = $model::where($dateColumn, $operation_date)
+                ->with('operation.agent', 'driverAssignment.driver', 'operation.comments') // Load related models
+                ->get()
+                ->map(function ($operation) use ($section, $dateColumn, $timeColumn, $travelFromColumn, $travelToColumn, $flightNumber) {
+                    $operation->section = $section; // Dynamically add section
+                    $operation->dateColumn = $dateColumn;
+                    $operation->timeColumn = $timeColumn;
+
+                    if ($travelFromColumn && $travelToColumn) {
+                        $operation->travel_from = $operation->$travelFromColumn;
+                        $operation->travel_to = $operation->$travelToColumn;
+                    }
+                    if ($flightNumber) {
+                        $operation->flightNumber = $operation->$flightNumber;
+                    }
+
+                    return $operation;
+                });
+
+            $combinedOperations = array_merge($combinedOperations, $sectionOperations->toArray());
+        }
+
+        return $combinedOperations;
+    }
 }
