@@ -21,7 +21,6 @@ dev db.txt
 dev_sedhr.sql
 hubspotapi/
 id_rsa - 58.27.199.171 - Muddassir.ppk
-images/
 live_aeo_cro.sql.gz
 mustafai.zip
 my-app/
@@ -44,5 +43,7 @@ wellhello-php-backend/
 xampp/
 vendor/
 .env
-storage/app/public
+storage/app/public/uploads
+storage/app/public/attachments
+storage/app/public/operations
 
