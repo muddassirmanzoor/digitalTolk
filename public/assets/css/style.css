@@ -1,0 +1,55 @@
+﻿img.main-brand {
+    width: 100px;
+}
+img.tna-logo-inner {
+    width: 240px;
+}
+.filter-box-col {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    width: 20%;
+}
+.card-header {
+    padding: 0.4rem 0.5rem !important;
+}
+img.tna-logo-sm-inner {
+    height: 50px;
+}
+.ml-5 {
+    margin-left: 25px;
+}
+.table > thead {
+    vertical-align: middle;
+    background: #4f93a0;
+    color: #ffffff;
+}.table > thead {
+     vertical-align: middle;
+     background: #4f93a0;
+     color: #ffffff;
+ }
+.table {
+    vertical-align: middle;
+}
+.text-success1 {
+    color: #0acf97 !important;
+}
+.text-gold {
+    color: #8E6A42 !important;
+}
+.form-checkbox-gold .form-check-input:checked, .form-radio-gold .form-check-input:checked {
+    background-color: #8E6A42;
+    border-color: #8E6A42;
+}
+.pagination-rounded .page-link {
+    color: #d6a36c !important;
+}
+li.paginate_button.page-item.active a {
+    color: #ffffff !important;
+}
+.logo-inner{width: 60px}
+@media (max-width: 1200px) {
+    .navbar-custom .app-search {
+        display: block !important;
+    }
+}
