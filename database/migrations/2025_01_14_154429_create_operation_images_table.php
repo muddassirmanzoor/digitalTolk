@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('login_logs', function (Blueprint $table) {
+        Schema::create('operation_images', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->index();
-            $table->timestamp('login_time')->useCurrent();
-            $table->string('user_type');
-            $table->ipAddress('ip_address');
+            $table->integer('operational_id');
+            $table->integer('operation_information_id');
+            $table->string('image_path');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('login_logs');
+        Schema::dropIfExists('operation_images');
     }
 };

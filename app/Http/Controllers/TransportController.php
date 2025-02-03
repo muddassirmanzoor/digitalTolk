@@ -32,7 +32,7 @@ class TransportController extends Controller
 {
     public function operationsList(Request $request)
     {
-        $operation_date = $request->operation_date ?? now()->addDay()->format('Y-m-d'); // Default to today if not provided
+        $operation_date = $request->operation_date ?? now()->format('Y-m-d'); // Default to today if not provided
         $combinedOperations = $this->getOperationsData($operation_date);
 
         return view('transport.operationList', compact('combinedOperations', 'operation_date'));
@@ -119,7 +119,7 @@ class TransportController extends Controller
 
     public function downloadArabicExcel(Request $request)
     {
-        $operation_date = $request->operation_date ?? now()->addDay()->format('Y-m-d'); // Default to today if not provided
+        $operation_date = $request->operation_date ?? now()->format('Y-m-d'); // Default to today if not provided
         $combinedOperations = $this->getOperationsData($operation_date);
 
         return Excel::download(new ArabicExport($combinedOperations), 'list.xlsx');
@@ -132,8 +132,8 @@ class TransportController extends Controller
     {
         // Model mapping for different sections
         $modelMapping = [
-            'arrival' => [ArrivalSection::class, 'arrival_date', 'arrival_time', null, null, 'arrival_flight_no'],
-            'departure' => [DepartureSection::class, 'departure_date', 'departure_time', null, null, 'departure_flight_no'],
+            'arrival' => [ArrivalSection::class, 'arrival_date', 'arrival_time', 'travel_from', 'travel_to', 'arrival_flight_no'],
+            'departure' => [DepartureSection::class, 'departure_date', 'departure_time', 'travel_from', 'travel_to', 'departure_flight_no'],
             'movement' => [MovementSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to', null],
             'mzarat' => [MzaratSection::class, 'travel_date', 'travel_time', 'travel_from', 'travel_to', null],
         ];
@@ -158,11 +158,19 @@ class TransportController extends Controller
                     }
 
                     return $operation;
-                });
+                })
+                ->sortBy('transport_time') // Sort each section by transport_time
+                ->values(); // Reset array indices
 
             $combinedOperations = array_merge($combinedOperations, $sectionOperations->toArray());
         }
 
-        return $combinedOperations;
+        // Final sorting on all combined data by transport_time
+        $sortedOperations = collect($combinedOperations)
+            ->sortBy('transport_time') // Sort all operations by transport_time
+            ->values() // Reset array indices
+            ->all();
+
+        return $sortedOperations;
     }
 }

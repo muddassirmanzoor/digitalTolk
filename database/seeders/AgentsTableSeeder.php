@@ -14,6 +14,9 @@ class AgentsTableSeeder extends Seeder
      */
     public function run(): void
     {
+        // Truncate the table before seeding
+        DB::table('agents')->truncate();
+
         for ($i = 1; $i <= 5; $i++) {
             DB::table('agents')->insert([
                 'agent_name' => 'Agent ' . $i,

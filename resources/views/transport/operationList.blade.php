@@ -57,7 +57,7 @@
                 <th>Time</th>
                 <th>Travel From</th>
                 <th>Travel To</th>
-                <th>Driver</th>
+{{--                <th>Driver</th>--}}
             </tr>
             </thead>
             <tbody>
@@ -74,20 +74,20 @@
                     <td>{{ $operation[$operation['timeColumn']] }}</td>
                     <td>{{ $operation['travel_from'] ?? '-' }}</td>
                     <td>{{ $operation['travel_to'] ?? '-' }}</td>
-                    <td>
-                        @if($operation['driver_assignment'])
-                            <a href="{{ url('edit-driver-assignment/' . $operation['id']) }}" class="btn btn-sm btn-primary">
-                                {{ $operation['driver_assignment']['driver']['driver_name'] }}
-                            </a>
-                        @else
-                            <form action="{{ url('assign-driver-form') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <input type="hidden" name="operation_id" value="{{ $operation['operational_id'] }}">
-                                <input type="hidden" name="section" value="{{ $operation['section'] }}">
-                                <button type="submit" class="btn btn-sm btn-success">Assign</button>
-                            </form>
-                        @endif
-                    </td>
+{{--                    <td>--}}
+{{--                        @if($operation['driver_assignment'])--}}
+{{--                            <a href="{{ url('edit-driver-assignment/' . $operation['id']) }}" class="btn btn-sm btn-primary">--}}
+{{--                                {{ $operation['driver_assignment']['driver']['driver_name'] }}--}}
+{{--                            </a>--}}
+{{--                        @else--}}
+{{--                            <form action="{{ url('assign-driver-form') }}" method="POST" style="display: inline;">--}}
+{{--                                @csrf--}}
+{{--                                <input type="hidden" name="operation_id" value="{{ $operation['operational_id'] }}">--}}
+{{--                                <input type="hidden" name="section" value="{{ $operation['section'] }}">--}}
+{{--                                <button type="submit" class="btn btn-sm btn-success">Assign</button>--}}
+{{--                            </form>--}}
+{{--                        @endif--}}
+{{--                    </td>--}}
                 </tr>
             @endforeach
             </tbody>

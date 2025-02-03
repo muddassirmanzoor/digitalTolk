@@ -20,6 +20,7 @@ class OperationInformation extends Model
         'voucher_number',
         'group_leader_name',
         'group_leader_number',
+        'group_numbers',
         'status',
         'created_by',
         'edited_by',
@@ -96,5 +97,9 @@ class OperationInformation extends Model
     public function comments()
     {
         return $this->hasMany(EditComment::class, 'operational_id', 'operational_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(OperationImage::class,'operational_id', 'operational_id');
     }
 }

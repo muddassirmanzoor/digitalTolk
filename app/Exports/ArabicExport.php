@@ -5,6 +5,8 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Sheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -28,22 +30,22 @@ class ArabicExport implements FromCollection, WithHeadings, WithStyles, WithEven
                 $operation['operation']['nationality'] ?? '',
                 $operation['operation']['pax'] ?? '',
                 $operation['operation']['voucher_number'] ?? '',
-                $operation['operation']['group_number'] ?? '',
+                json_decode($operation['operation']['group_numbers']) ?? '',
                 $operation['operation']['group_leader_number'] ?? '',
                 $operation['section'] ?? '',
                 $operation['travel_from'] ?? '',
                 $operation['travel_to'] ?? '',
-                $operation[date('d-m-Y', strtotime($operation[$operation['dateColumn']])) ] ?? '',
+                date('d-m-Y', strtotime($operation[$operation['dateColumn']]))  ?? '',
                 $operation['flightNumber'] ?? '',
                 $operation[$operation['timeColumn']] ?? '',
                 $operation['terminal_name'] ?? '',
                 $operation['transport_time'] ?? '',
                 $operation['transport_company'] ?? '',
-                $operation['driver_assignment']['driver']['name'] ?? '',
-                $operation['driver_assignment']['driver']['phone'] ?? '',
-                $operation['operation']['receiver'] ?? '',
-                $operation['operation']['field_receiver'] ?? '',
-                $operation['operation']['comments'][0]['comments'] ?? '',
+//                $operation['driver_assignment']['driver']['name'] ?? '',
+//                $operation['driver_assignment']['driver']['phone'] ?? '',
+//                $operation['operation']['receiver'] ?? '',
+//                $operation['operation']['field_receiver'] ?? '',
+//                $operation['operation']['comments'][0]['comments'] ?? '',
             ];
         });
     }
@@ -99,23 +101,85 @@ class ArabicExport implements FromCollection, WithHeadings, WithStyles, WithEven
         return 'A1';
     }
 
+    /**
+     * Apply styles to the sheet.
+     *
+     * @param Worksheet $sheet
+     * @return array|null
+     */
     public function styles(Worksheet $sheet)
     {
-        return [
-            // Styling the headings
-            1 => ['font' => ['bold' => true, 'size' => 12]],
-        ];
+        // Set background color for heading
+        $sheet->getStyle('A1:U1')->applyFromArray([
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => '92D050', // Green background color (RGB: 146, 208, 80)
+                ],
+            ],
+            'font' => [
+                'bold' => true, // Bold text
+                'color' => [
+                    'rgb' => '000000', // White text color
+                ],
+            ],
+        ]);
+
+        // Increase row height for the header
+        $sheet->getRowDimension(1)->setRowHeight(25); // Adjust row height as needed
+
+        // Adjust column width (if auto-size isn't enough)
+        foreach (range('A', 'U') as $column) {
+            $sheet->getColumnDimension($column)->setWidth(10); // Set wider column width
+        }
+
+        return null;
     }
 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                // Set text direction to RTL
-                $event->sheet->getDelegate()->setRightToLeft(true);
-                // Set text direction to RTL
-                $event->sheet->getDelegate()->getStyle('A1:U3')
-                    ->getAlignment()->setHorizontal('right');
+                $sheet = $event->sheet->getDelegate();
+
+                // Apply RTL alignment for the whole sheet
+                $sheet->setRightToLeft(true);
+
+                // Apply alignment for all cells
+                $sheet->getStyle('A1:U' . ($sheet->getHighestRow()))->getAlignment()->setHorizontal('right');
+
+                // Apply black border to all cells
+                $sheet->getStyle('A1:U' . $sheet->getHighestRow())
+                    ->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                                'color' => ['rgb' => '000000'], // Black border
+                            ],
+                        ],
+                    ]);
+                // Apply background color for rows based on the 'section' value
+                $rowCount = $sheet->getHighestRow();
+                for ($row = 2; $row <= $rowCount; $row++) {
+                    $section = $sheet->getCell('H' . $row)->getValue(); // Assuming 'section' is in column H
+
+                    $color = match ($section) {
+                        'arrival' => 'FFE6F0', // Light Pink
+                        'departure' => 'E6F7FF', // Light Blue
+                        'movement' => 'E6FFE6', // Light Green
+                        'mzarat' => 'FFF4E6', // Light Orange
+                        default => null,
+                    };
+
+                    if ($color) {
+                        $sheet->getStyle("A$row:U$row")->applyFromArray([
+                            'fill' => [
+                                'fillType' => Fill::FILL_SOLID,
+                                'startColor' => ['rgb' => $color],
+                            ],
+                        ]);
+                    }
+                }
             },
         ];
     }

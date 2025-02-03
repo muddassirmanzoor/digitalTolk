@@ -33,7 +33,7 @@
         <div class="col-xl-12 col-lg-12">
             <div class="card card-h-100">
                 <div class="card-body">
-                    <form action="{{ url('update-data/' . $operation->operational_id) }}" method="post">
+                    <form action="{{ url('update-data/' . $operation->operational_id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-xl-12 col-lg-12">
@@ -85,6 +85,13 @@
                             </div>
                             <div class="col-xl-6 col-lg-6">
                                 <div class="mb-3">
+                                    <label for="groupNumbers" class="form-label">Group Numbers</label>
+                                    <input type="text" id="groupNumbers" name="group_numbers" class="form-control"
+                                           value="{{ implode(',', json_decode($operation->group_numbers)) }}" placeholder="Enter Group Numbers (comma-separated)">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6">
+                                <div class="mb-3">
                                     <label for="groupLeaderName" class="form-label">Group Leader Name</label>
                                     <input type="text" id="groupLeaderName" name="group_leader_name"
                                            class="form-control" value="{{ $operation->group_leader_name }}">
@@ -97,6 +104,21 @@
                                            class="form-control" value="{{ $operation->group_leader_number }}">
                                 </div>
                             </div>
+                            <label>Existing Images:</label>
+                            <div class="d-flex flex-wrap gap-3 align-items-center">
+                                @foreach ($operation->images as $image)
+                                    <div class="text-center">
+                                        <img src="{{ asset('storage/' . $image->image_path) }}" alt="Operation Image" width="100" class="img-thumbnail">
+                                        <div>
+                                            <input type="checkbox" name="remove_images[]" value="{{ $image->id }}"> Remove
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <label>Upload New Images:</label>
+                            <input type="file" name="images[]" multiple>
+
 
                             <div class="row">
                                 <!-- Checkbox Section -->
@@ -159,6 +181,20 @@
                                         <input type="text" id="terminalName" name="arrival[terminal_name]"
                                                class="form-control" placeholder="Enter Terminal Name"
                                                value="{{ old('arrival.terminal_name', $operation->arrival->terminal_name ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelFrom" class="form-label">From</label>
+                                        <input type="text" id="travelFrom" name="arrival[travel_from]" class="form-control"
+                                               placeholder="From" value="{{ old('arrival.terminal_name', $operation->arrival->travel_from ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelTo" class="form-label">To</label>
+                                        <input type="text" id="travelTo" name="arrival[travel_to]" class="form-control"
+                                               placeholder="To" value="{{ old('arrival.terminal_name', $operation->arrival->travel_to ?? '') }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6">
@@ -319,6 +355,20 @@
                                         <input type="text" id="terminalName" name="departure[terminal_name]" class="form-control"
                                                placeholder="Enter Terminal Name"
                                                value="{{ old('departure.terminal_name', $operation->departure->terminal_name ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelFrom" class="form-label">From</label>
+                                        <input type="text" id="travelFrom" name="departure[travel_from]" class="form-control"
+                                               placeholder="From" value="{{ old('departure.terminal_name', $operation->departure->travel_from ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelTo" class="form-label">To</label>
+                                        <input type="text" id="travelTo" name="departure[travel_to]" class="form-control"
+                                               placeholder="To" value="{{ old('departure.terminal_name', $operation->departure->travel_to ?? '') }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6">

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('group_leader_number')->nullable();
             $table->string('created_by')->nullable();
             $table->integer('status')->default(0);
+            $table->json('group_numbers')->nullable();
             $table->timestamps();
         });
     }

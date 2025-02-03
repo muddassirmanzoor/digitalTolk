@@ -11,6 +11,7 @@ use App\Models\InterviewResult;
 use App\Models\Markaz;
 use App\Models\MovementSection;
 use App\Models\MzaratSection;
+use App\Models\OperationImage;
 use App\Models\OperationInformation;
 use App\Models\PaperResult;
 use App\Models\School;
@@ -53,7 +54,7 @@ class DataController extends Controller
     {
         $agents = Agent::where('status', 1)->get();
         $operation = OperationInformation::where('id', $operation_id)
-            ->with('arrival', 'movement', 'mzarat', 'departure', 'comments')->first();
+            ->with('arrival', 'movement', 'mzarat', 'departure', 'comments', 'images')->first();
         return view('data.editForm', compact('agents', 'operation'));
     }
 
@@ -97,6 +98,8 @@ class DataController extends Controller
 
         DB::beginTransaction();
         try {
+            $groupNumbers = explode(',', $request->input('group_numbers')); // Split comma-separated values into an array
+
             // Create the operational information record
             $operationalInfo = OperationInformation::create([
                 'operational_id' => $request->input('operational_id'),
@@ -106,9 +109,18 @@ class DataController extends Controller
                 'nationality' => $request->input('nationality'),
                 'group_leader_name' => $request->input('group_leader_name'),
                 'group_leader_number' => $request->input('group_leader_number'),
+                'group_numbers' => json_encode($groupNumbers),
                 'created_by' => auth()->user()->id,
                 'status' => 0,
             ]);
+
+            // Handle images
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('operations/images', 'public');
+                    $operationalInfo->images()->create(['image_path' => $path, 'operational_id' => $request->input('operational_id')]);
+                }
+            }
 
             // Handle Arrival Section if data is provided
             if ($request->has('arrival')) {
@@ -117,6 +129,8 @@ class DataController extends Controller
                     'operational_id' => $request->input('operational_id'),
                     'arrival_date' => $request->input('arrival.arrival_date'),
                     'arrival_time' => $request->input('arrival.arrival_time'),
+                    'travel_from' => $request->input('arrival.travel_from'),
+                    'travel_to' => $request->input('arrival.travel_to'),
                     'arrival_flight_no' => $request->input('arrival.arrival_flight_no'),
                     'terminal_name' => $request->input('arrival.terminal_name'),
                     'transport_time' => $request->input('arrival.transport_time'),
@@ -185,6 +199,8 @@ class DataController extends Controller
                         'operational_id' => $request->input('operational_id'),
                         'departure_date' => $request->input('departure.departure_date'),
                         'departure_time' => $request->input('departure.departure_time'),
+                        'travel_from' => $request->input('departure.travel_from'),
+                        'travel_to' => $request->input('departure.travel_to'),
                         'departure_flight_no' => $request->input('departure.departure_flight_no'),
                         'terminal_name' => $request->input('departure.terminal_name'),
                         'transport_time' => $request->input('departure.transport_time'),
@@ -220,6 +236,8 @@ class DataController extends Controller
             // Find the existing operational information record
             $operationalInfo = OperationInformation::where('operational_id', $operational_id)->firstOrFail();
 
+            $groupNumbers = explode(',', $request->input('group_numbers')); // Split comma-separated values into an array
+
             // Update the operational information
             $operationalInfo->update([
                 'operational_id' => $request->input('operational_id'),
@@ -229,7 +247,48 @@ class DataController extends Controller
                 'nationality' => $request->input('nationality'),
                 'group_leader_name' => $request->input('group_leader_name'),
                 'group_leader_number' => $request->input('group_leader_number'),
+                'group_numbers' => json_encode($groupNumbers),
+
             ]);
+
+            // Handle new images using a batch insert for efficiency
+            if ($request->hasFile('images')) {
+                $imageData = [];
+
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('operations/images', 'public');
+                    $imageData[] = [
+                        'image_path' => $path,
+                        'operational_id' => $operationalInfo->operational_id,
+                        'operation_information_id' => $operationalInfo->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Insert all image data at once
+                DB::table('operation_images')->insert($imageData);
+            }
+
+            // Optionally handle removing existing images (e.g., via request input)
+            if ($request->has('remove_images')) {
+                if($operationalInfo->status == 1) {
+                    $deletedImages = OperationImage::whereIn('id', $request->remove_images)->get();
+
+                    foreach ($deletedImages as $image) {
+                        AuditLog::create([
+                            'section' => 'Images',
+                            'record_id' => $image->id,
+                            'operational_id' => $image->operational_id,
+                            'user_id' => Auth::id(),
+                            'field' => 'image_path',
+                            'old_value' => $image->image_path,
+                            'new_value' => null,
+                        ]);
+                    }
+                }
+                OperationImage::whereIn('id', $request->remove_images)->delete();
+            }
 
             // Update Arrival Section
             if ($request->has('arrival')) {
@@ -240,6 +299,8 @@ class DataController extends Controller
                         'operational_id' => $request->input('operational_id'),
                         'arrival_date' => $arrivalData['arrival_date'],
                         'arrival_time' => $arrivalData['arrival_time'],
+                        'travel_from' => $arrivalData['travel_from'],
+                        'travel_to' => $arrivalData['travel_to'],
                         'arrival_flight_no' => $arrivalData['arrival_flight_no'],
                         'terminal_name' => $arrivalData['terminal_name'],
                         'transport_time' => $arrivalData['transport_time'],
@@ -318,6 +379,8 @@ class DataController extends Controller
                             'operational_id' => $request->input('operational_id'),
                             'departure_date' => $departureData['departure_date'],
                             'departure_time' => $departureData['departure_time'],
+                            'travel_from' => $departureData['travel_from'],
+                            'travel_to' => $departureData['travel_to'],
                             'departure_flight_no' => $departureData['departure_flight_no'],
                             'terminal_name' => $departureData['terminal_name'],
                             'transport_time' => $departureData['transport_time'],
@@ -326,17 +389,18 @@ class DataController extends Controller
                     );
                 }
             }
-            if ($request->has('comments')) {
-                if (empty(trim($request->input('comments', '')))) {
 
+            if ($request->has('comments')) {
+                if (!empty(trim($request->input('comments', '')))) {
+                    EditComment::updateOrCreate(
+                        ['operational_id' => $request->input('operational_id')],
+                        [
+                            'comments' => $request->input('comments'),
+                            'added_by' => Auth::id(),
+                        ]
+                    );
                 }
-                EditComment::updateOrCreate(
-                    ['operational_id' => $request->input('operational_id')],
-                    [
-                        'comments' => $request->input('comments'),
-                        'added_by' => Auth::id(),
-                    ]
-                );
+
             }
 
             // Commit the transaction

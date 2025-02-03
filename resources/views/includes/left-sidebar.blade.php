@@ -59,12 +59,12 @@
                         <span>Agent List</span>
                     </a>
                 </li>
-                <li class="side-nav-item">
-                    <a href="{{url('driver-list')}}" class="side-nav-link">
-                        <i class="uil-copy-alt"></i>
-                        <span>Driver List</span>
-                    </a>
-                </li>
+{{--                <li class="side-nav-item">--}}
+{{--                    <a href="{{url('driver-list')}}" class="side-nav-link">--}}
+{{--                        <i class="uil-copy-alt"></i>--}}
+{{--                        <span>Driver List</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 <li class="side-nav-item">
                     <a href="{{url('operations-list')}}" class="side-nav-link">
                         <i class="uil-copy-alt"></i>

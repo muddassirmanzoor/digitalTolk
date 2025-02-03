@@ -33,7 +33,7 @@
         <div class="col-xl-12 col-lg-12">
             <div class="card card-h-100">
                 <div class="card-body">
-                    <form action="{{'add-data'}}" method="post">
+                    <form action="{{'add-data'}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-xl-12 col-lg-12">
@@ -83,6 +83,13 @@
                             </div>
                             <div class="col-xl-6 col-lg-6">
                                 <div class="mb-3">
+                                    <label for="groupNumbers" class="form-label">Group Numbers</label>
+                                    <input type="text" id="groupNumbers" name="group_numbers" class="form-control"
+                                           placeholder="Enter Group Numbers (comma-separated)" required>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6">
+                                <div class="mb-3">
                                     <label for="groupLeaderName" class="form-label">Group Leader Name</label>
                                     <input type="text" id="groupLeaderName" name="group_leader_name"
                                            class="form-control" placeholder="Enter Group Leader Name">
@@ -95,6 +102,9 @@
                                            class="form-control" placeholder="Enter Group Leader Number">
                                 </div>
                             </div>
+
+                            <label>Upload Images:</label>
+                            <input type="file" name="images[]" multiple>
 
                             <div class="row">
                                 <!-- Checkbox Section -->
@@ -149,6 +159,20 @@
                                         <label for="terminalName" class="form-label">Terminal Name</label>
                                         <input type="text" id="terminalName" name="arrival[terminal_name]" class="form-control"
                                                placeholder="Enter Terminal Name">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelFrom" class="form-label">From</label>
+                                        <input type="text" id="travelFrom" name="arrival[travel_from]" class="form-control"
+                                               placeholder="From">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelTo" class="form-label">To</label>
+                                        <input type="text" id="travelTo" name="arrival[travel_to]" class="form-control"
+                                               placeholder="To">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6">
@@ -291,6 +315,20 @@
                                         <label for="terminalName" class="form-label">Terminal Name</label>
                                         <input type="text" id="terminalName" name="departure[terminal_name]" class="form-control"
                                                placeholder="Enter Terminal Name">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelFrom" class="form-label">From</label>
+                                        <input type="text" id="travelFrom" name="departure[travel_from]" class="form-control"
+                                               placeholder="From">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="travelTo" class="form-label">To</label>
+                                        <input type="text" id="travelTo" name="departure[travel_to]" class="form-control"
+                                               placeholder="To">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6">
