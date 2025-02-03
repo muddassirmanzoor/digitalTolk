@@ -43,7 +43,6 @@ wellhello-php-api/
 wellhello-php-backend/
 xampp/
 vendor/
-storage/
 .env
-
+storage/app/public
 
