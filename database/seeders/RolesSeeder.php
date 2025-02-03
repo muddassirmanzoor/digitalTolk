@@ -62,6 +62,7 @@ class RolesSeeder extends Seeder
                 [
                     'name' => $userData['name'],
                     'password' => Hash::make($userData['password']),
+                    'status' => $userData['status'],
                 ]
             );
 
