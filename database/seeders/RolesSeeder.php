@@ -22,26 +22,31 @@ class RolesSeeder extends Seeder
                 'name' => 'Admin User',
                 'email' => 'admin@admin.com',
                 'password' => 'admin123',
+                'status' => '1',
             ],
             'manager' => [
                 'name' => 'Manager User',
                 'email' => 'manager@admin.com',
                 'password' => 'manager123',
+                'status' => '1',
             ],
             'deo' => [
                 'name' => 'Data Entry Operator',
                 'email' => 'deo@admin.com',
                 'password' => 'deo123',
+                'status' => '1',
             ],
             'reviewer' => [
                 'name' => 'Reviewer User',
                 'email' => 'reviewer@admin.com',
                 'password' => 'reviewer123',
+                'status' => '1',
             ],
             'transport' => [
                 'name' => 'Transport User',
                 'email' => 'transport@admin.com',
                 'password' => 'transport123',
+                'status' => '1',
             ],
         ];
 
