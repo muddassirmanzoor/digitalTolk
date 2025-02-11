@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OperationImage extends Model
 {
-    protected $fillable = ['operational_id','operational_information_id', 'image_path'];
+    protected $fillable = ['operational_id','operation_information_id', 'image_path'];
 
     public function operation()
     {
