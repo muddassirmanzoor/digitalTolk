@@ -118,7 +118,9 @@ class DataController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('operations/images', 'public');
-                    $operationalInfo->images()->create(['image_path' => $path, 'operational_id' => $request->input('operational_id')]);
+                    $operationalInfo->images()->create(['image_path' => $path,
+                        'operational_id' => $request->input('operational_id'),
+                        'operation_information_id' => $operationalInfo->id]);
                 }
             }
 
