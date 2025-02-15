@@ -27,9 +27,9 @@
                         <button type="submit" class="btn btn-primary">Search Data</button>
                     </div>
 
-                    <!-- Search Button -->
+                    <!-- Download Button with Dynamic Date -->
                     <div class="mb-2">
-                        <a href="{{url('download-arrival-list')}}" class="btn btn-primary">Download Data</a>
+                        <a href="{{ url('download-arrival-list') }}" id="downloadBtn" class="btn btn-primary">Download Data</a>
                     </div>
                 </div>
             </div>
@@ -92,5 +92,25 @@
             @endforeach
             </tbody>
         </table>
+        <!-- JavaScript to Append Date to Download URL -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let operationDateInput = document.getElementById('operation_date');
+                let downloadBtn = document.getElementById('downloadBtn');
+                let baseUrl = "{{ url('download-arrival-list') }}";
 
+                // Function to update download link
+                function updateDownloadUrl() {
+                    let selectedDate = operationDateInput.value || "{{ old('operation_date', $operation_date ?? '') }}";
+                    downloadBtn.href = baseUrl + "?operation_date=" + selectedDate;
+                }
+
+                // Set default date on page load
+                updateDownloadUrl();
+
+                // Update URL when user selects a new date
+                operationDateInput.addEventListener('change', updateDownloadUrl);
+            });
+        </script>
 @endsection
+
