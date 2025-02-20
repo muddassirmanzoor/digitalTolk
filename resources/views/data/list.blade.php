@@ -79,7 +79,7 @@
                             <td>{{$operation['group_leader_name']}}</td>
                             <td>{{$operation['nationality']}}</td>
                             <td>{{date('d-m-Y', strtotime($operation['arrival']['arrival_date']))}}</td>
-                            <td>{{date('d-m-Y', strtotime($operation['departure']['departure_date']))}}</td>
+                            <td>{{ optional($operation['departure'])['departure_date'] ? date('d-m-Y', strtotime($operation['departure']['departure_date'])) : 'N/A' }}</td>
 {{--                            <td>{{$operation['status'] == 0 ? 'Entered' : 'Confirmed'}}</td>--}}
                             @if(auth()->check() && auth()->user()->getRoleNames()->first() !== 'transport')
 
