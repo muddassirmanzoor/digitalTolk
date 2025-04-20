@@ -15,11 +15,12 @@ class TimeSlotSeeder extends Seeder
     {
         $slot = TimeSlot::create([
             'address_id' => 1,
-            'weekdays' => json_encode(['monday', 'wednesday']),
+            'specific_date' => '2025-04-22', // Example of a dynamic slot
             'start_time' => '09:00',
             'end_time' => '12:00',
         ]);
 
         $slot->appointmentTypes()->attach([1, 2]);
+
     }
 }

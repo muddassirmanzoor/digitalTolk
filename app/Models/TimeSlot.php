@@ -22,12 +22,14 @@ class TimeSlot extends Model
     {
         $dates = [];
 
-        if ($this->date) {
-            $date = Carbon::parse($this->date);
+        // Check for a specific date (dynamic slot)
+        if ($this->specific_date) {
+            $date = Carbon::parse($this->specific_date);
             if ($date->between($start, $end)) {
                 $dates[] = $date->toDateString();
             }
         } elseif ($this->weekdays) {
+            // Handle weekdays
             $weekdays = is_array($this->weekdays) ? $this->weekdays : json_decode($this->weekdays, true);
             $period = CarbonPeriod::create($start, $end);
 
@@ -40,5 +42,6 @@ class TimeSlot extends Model
 
         return $dates;
     }
+
 
 }
