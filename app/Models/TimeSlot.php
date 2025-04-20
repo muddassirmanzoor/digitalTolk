@@ -13,6 +13,13 @@ class TimeSlot extends Model
         'weekdays' => 'array',
     ];
 
+    protected $fillable = [
+        'address_id',
+        'weekdays',
+        'start_time',
+        'end_time',
+    ];
+
     public function appointmentTypes()
     {
         return $this->belongsToMany(AppointmentType::class, 'time_slot_appointment_type');

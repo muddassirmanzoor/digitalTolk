@@ -13,14 +13,17 @@ class TimeSlotSeeder extends Seeder
      */
     public function run()
     {
+        $dayOfWeek = strtolower(now()->addDays(2)->format('l')); // ensures it will match the test logic
+
         $slot = TimeSlot::create([
             'address_id' => 1,
-            'specific_date' => '2025-04-22', // Example of a dynamic slot
+            'weekdays' => json_encode([$dayOfWeek]),
             'start_time' => '09:00',
             'end_time' => '12:00',
         ]);
 
         $slot->appointmentTypes()->attach([1, 2]);
+
 
     }
 }
