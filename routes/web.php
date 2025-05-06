@@ -1,12 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\DataController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AgentController;
-use App\Http\Controllers\DriverController;
-use App\Http\Controllers\TransportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

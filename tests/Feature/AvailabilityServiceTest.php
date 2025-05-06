@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Address;
+use App\Models\Translation;
 use App\Models\AppointmentType;
 use App\Models\TimeSlot;
 use App\Services\AvailabilityService;
@@ -15,7 +15,7 @@ class AvailabilityServiceTest extends TestCase
     public function testAvailabilityForAppointmentType()
     {
         // Prepare test data
-        $address = Address::create(['name' => 'Test Clinic']);
+        $address = Translation::create(['name' => 'Test Clinic']);
         $appointmentType = AppointmentType::create(['name' => 'Consultation', 'duration_minutes' => 30]);
 
         // Create a TimeSlot with a specific date
