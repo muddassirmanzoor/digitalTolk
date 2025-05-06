@@ -9,6 +9,35 @@ use Illuminate\Support\Facades\Cache;
 
 class TranslationController extends Controller
 {
+    /**
+     * @OA\OpenApi(
+     *     @OA\Info(
+     *         version="1.0.0",
+     *         title="Translation Management API",
+     *         description="API documentation for the Translation Management Service"
+     *     ),
+     *     @OA\Server(
+     *         url=L5_SWAGGER_CONST_HOST,
+     *         description="Localhost API server"
+     *     )
+     * )
+     */
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/translations",
+     *     tags={"Translations"},
+     *     summary="List translations with optional filters",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="locale", in="query", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="tags", in="query", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="key", in="query", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="value", in="query", @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
+
     public function index(Request $request)
     {
         $locale = $request->input('locale', 'en');

@@ -9,6 +9,20 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\OpenApi(
+     *     @OA\Info(
+     *         version="1.0.0",
+     *         title="Translation Management API",
+     *         description="API documentation for the Translation Management Service"
+     *     ),
+     *     @OA\Server(
+     *         url=L5_SWAGGER_CONST_HOST,
+     *         description="Localhost API server"
+     *     )
+     * )
+     */
+
     public function register(Request $request)
     {
         $request->validate([
